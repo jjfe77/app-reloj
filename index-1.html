@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Mi App Didáctica</title>
+   <!-- <link rel="stylesheet" href="style.css"> -->
+
+     <style>
+        body { font-family: Arial; text-align: center; background-color: #f4f4f4; }
+        .contenedor { background: white; margin: 50px auto; padding: 20px; width: 300px; border-radius: 10px; box-shadow: 0 0 10px rgba(0,0,0,0.1); }
+        h2 { color: #333; }
+        button { background: #007bff; color: white; border: none; padding: 10px; border-radius: 5px; cursor: pointer; }
+        ul { text-align: left; margin-top: 20px; }
+    </style>
+</head>
+<body>
+    <div class="contenedor">
+        <h2>Hora actual:</h2>
+        <div id="reloj" style="font-size: 20px; font-weight: bold;">Cargando...</div>
+        <br>
+        <button onclick="guardar()">Guardar este momento</button>
+        <hr>
+        <h4>Últimos registros:</h4>
+        <ul id="lista"></ul>
+    </div>
+
+    <script>
+        // Reloj en vivo
+        setInterval(() => {
+            document.getElementById('reloj').innerText = new Date().toLocaleString();
+        }, 1000);
+
+        // Función para guardar en la base de datos
+        async function guardar() {
+            await fetch('/guardar', { method: 'POST' });
+            obtenerHistorial();
+        }
+
+        // Función para traer datos de la base de datos
+        async function obtenerHistorial() {
+            const respuesta = await fetch('/historial');
+            const datos = await respuesta.json();
+            const lista = document.getElementById('lista');
+            lista.innerHTML = datos.map(f => `<li>${new Date(f.fecha_hora).toLocaleString()}</li>`).join('');
+        }
+
+        obtenerHistorial(); // Cargar al abrir la página
+    </script>
+</body>
+</html>
