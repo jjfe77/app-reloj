@@ -1,0 +1,79 @@
+/* Estilos generales */
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    margin: 0;
+    color: #333;
+}
+
+/* El contenedor principal (la tarjeta) */
+.contenedor {
+    background: white;
+    padding: 2rem;
+    border-radius: 20px;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+    width: 350px;
+    text-align: center;
+}
+
+h2 {
+    color: #4b6cb7;
+    margin-bottom: 0.5rem;
+}
+
+/* El reloj */
+#reloj {
+    font-size: 2rem;
+    font-weight: bold;
+    color: #2d3436;
+    background: #f1f2f6;
+    padding: 10px;
+    border-radius: 10px;
+    margin: 20px 0;
+}
+
+/* El botón */
+button {
+    background: #6c5ce7;
+    color: white;
+    border: none;
+    padding: 12px 24px;
+    font-size: 1rem;
+    border-radius: 50px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    width: 100%;
+}
+
+button:hover {
+    background: #a29bfe;
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(108, 92, 231, 0.4);
+}
+
+/* La lista de registros */
+h4 {
+    margin-top: 30px;
+    border-bottom: 2px solid #f1f2f6;
+    padding-bottom: 10px;
+}
+
+ul {
+    list-style: none;
+    padding: 0;
+    max-height: 200px;
+    overflow-y: auto;
+}
+
+li {
+    background: #f9f9f9;
+    margin: 5px 0;
+    padding: 8px;
+    border-radius: 5px;
+    font-size: 0.9rem;
+    border-left: 4px solid #6c5ce7;
+}

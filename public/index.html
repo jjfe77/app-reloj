@@ -3,35 +3,21 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Reloj Base de Datos Render</title>
-    <style>
-        body { background-color: #1a1a1a; color: white; font-family: Arial, sans-serif; display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 100vh; margin: 0; }
-        .contenedor { background: #2d2d2d; padding: 30px; border-radius: 15px; text-align: center; width: 400px; box-shadow: 0 0 20px rgba(0,0,0,0.5); }
-        #reloj { font-size: 60px; color: #00ff00; font-family: 'Courier New', monospace; margin: 10px 0; }
-        #fecha { color: #888; margin-bottom: 20px; }
-        .botones { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-        button { padding: 12px; cursor: pointer; border: none; border-radius: 5px; font-weight: bold; transition: 0.3s; }
-        .btn-reg { background: #00ff00; color: #000; grid-column: span 2; }
-        .btn-limpiar { background: #ff4444; color: white; }
-        .btn-ver { background: #555; color: white; }
-        button:hover { opacity: 0.8; }
-        .lista { background: #121212; margin-top: 20px; height: 180px; overflow-y: auto; text-align: left; padding: 10px; border: 1px solid #444; border-radius: 8px; }
-        ul { list-style: none; padding: 0; margin: 0; }
-        li { border-bottom: 1px solid #333; padding: 8px 0; font-size: 14px; color: #ddd; display: flex; justify-content: space-between; }
-        .num { color: #00ff00; font-weight: bold; }
-    </style>
+    <title>Reloj Pro - Render</title>
+    <!-- AQUÍ VINCULAMOS EL CSS -->
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
     <div class="contenedor">
         <div id="reloj">00:00:00</div>
-        <div id="fecha">Cargando fecha...</div>
+        <div id="fecha">Cargando...</div>
 
         <div class="botones">
-            <button class="btn-reg" onclick="registrar()">REGISTRAR EN BASE DE DATOS</button>
-            <button class="btn-limpiar" onclick="limpiarPantalla()">LIMPIAR PANTALLA</button>
-            <button class="btn-ver" onclick="obtenerHistorial(5)">ÚLTIMOS 5</button>
-            <button class="btn-ver" onclick="obtenerHistorial(100)" style="grid-column: span 2;">TODOS LOS REGISTROS</button>
+            <button class="btn-reg" onclick="registrar()">Registrar en Render</button>
+            <button class="btn-limpiar" onclick="limpiarPantalla()">Limpiar Pantalla</button>
+            <button class="btn-ver" onclick="obtenerHistorial(5)">Últimos 5</button>
+            <button class="btn-ver" onclick="obtenerHistorial(100)" style="grid-column: span 2;">Todos los Registros</button>
         </div>
 
         <div class="lista">
@@ -40,31 +26,24 @@
     </div>
 
     <script>
-        // Reloj 24h
+        // Lógica de conexión con server.js
         setInterval(() => {
             const ahora = new Date();
             document.getElementById('reloj').innerText = ahora.toLocaleTimeString('es-ES', {hour12: false});
             document.getElementById('fecha').innerText = ahora.toLocaleDateString('es-ES', {weekday:'long', year:'numeric', month:'long', day:'numeric'});
         }, 1000);
 
-        // LLAMADA AL SERVER PARA GUARDAR
         async function registrar() {
             await fetch('/guardar', { method: 'POST' });
             obtenerHistorial(5); 
         }
 
-        // LLAMADA AL SERVER PARA LEER (Con el límite que queramos)
         async function obtenerHistorial(limite) {
             const respuesta = await fetch('/historial');
             const datos = await respuesta.json();
-            
             const listaUI = document.getElementById('lista');
             listaUI.innerHTML = '';
-            
-            // Cortamos el array según lo que pidió el usuario (5 o 100)
-            const datosFiltrados = datos.slice(0, limite);
-
-            datosFiltrados.forEach((f, index) => {
+            datos.slice(0, limite).forEach((f, index) => {
                 const li = document.createElement('li');
                 const fechaNice = new Date(f.fecha_hora).toLocaleString('es-ES', {hour12: false});
                 li.innerHTML = `<span><span class="num">#${datos.length - index}</span> ${fechaNice}</span>`;
@@ -73,7 +52,7 @@
         }
 
         function limpiarPantalla() {
-            document.getElementById('lista').innerHTML = '<li style="color:#555; text-align:center;">Pantalla limpia</li>';
+            document.getElementById('lista').innerHTML = '<li style="color:#475569; text-align:center; margin-top:60px;">Pantalla despejada</li>';
         }
 
         obtenerHistorial(5);
