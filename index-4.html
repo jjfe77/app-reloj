@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reloj con Persistencia Real</title>
+    <style>
+        body { background-color: #1a1a1a; color: white; font-family: Arial, sans-serif; display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 100vh; margin: 0; }
+        .contenedor { background: #2d2d2d; padding: 30px; border-radius: 15px; text-align: center; width: 400px; box-shadow: 0 0 20px rgba(0,0,0,0.5); }
+        #reloj { font-size: 60px; color: #00ff00; font-family: monospace; margin: 10px 0; }
+        #fecha { color: #888; margin-bottom: 20px; }
+        .botones { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+        button { padding: 10px; cursor: pointer; border: none; border-radius: 5px; font-weight: bold; }
+        .btn-reg { background: #00ff00; grid-column: span 2; }
+        .btn-limpiar { background: #ff4444; color: white; }
+        .btn-ver { background: #555; color: white; }
+        .lista { background: #121212; margin-top: 20px; height: 150px; overflow-y: auto; text-align: left; padding: 10px; border: 1px solid #444; }
+        ul { list-style: none; padding: 0; }
+        li { border-bottom: 1px solid #333; padding: 5px 0; font-size: 13px; }
+    </style>
+</head>
+<body>
+
+    <div class="contenedor">
+        <div id="reloj">00:00:00</div>
+        <div id="fecha">Cargando...</div>
+
+        <div class="botones">
+            <button class="btn-reg" onclick="registrar()">REGISTRAR MOMENTO</button>
+            <button class="btn-limpiar" onclick="limpiarPantalla()">LIMPIAR PANTALLA</button>
+            <button class="btn-ver" onclick="mostrarUltimos(5)">ÚLTIMOS 5</button>
+            <button class="btn-ver" onclick="mostrarTodos()" style="grid-column: span 2;">VER TODOS LOS REGISTROS</button>
+        </div>
+
+        <div class="lista">
+            <ul id="lista-ui"></ul>
+        </div>
+    </div>
+
+    <script>
+        // --- AQUÍ ESTÁ EL TRUCO ---
+        // Al cargar, intentamos leer lo que haya guardado en el navegador
+        // Si no hay nada, creamos el array vacío []
+        let bddInterna = JSON.parse(localStorage.getItem('mis_datos_reloj')) || [];
+
+        function iniciarReloj() {
+            const ahora = new Date();
+            document.getElementById('reloj').textContent = ahora.toLocaleTimeString('es-ES', {hour12:false});
+            document.getElementById('fecha').textContent = ahora.toLocaleDateString('es-ES', {weekday:'long', year:'numeric', month:'long', day:'numeric'});
+        }
+
+        function registrar() {
+            const ahora = new Date();
+            const registro = {
+                hora: ahora.toLocaleTimeString('es-ES', {hour12: false}),
+                fecha: ahora.toLocaleDateString('es-ES')
+            };
+            
+            bddInterna.push(registro);
+            
+            // GUARDAR EN EL NAVEGADOR (Persistencia)
+            localStorage.setItem('mis_datos_reloj', JSON.stringify(bddInterna));
+            
+            mostrarTodos();
+        }
+
+        function renderizar(datos) {
+            const ui = document.getElementById('lista-ui');
+            ui.innerHTML = datos.length === 0 ? '<li>Pantalla vacía</li>' : '';
+            [...datos].reverse().forEach((item, i) => {
+                const li = document.createElement('li');
+                li.textContent = `#${datos.indexOf(item)+1} - ${item.fecha} - ${item.hora}`;
+                ui.appendChild(li);
+            });
+        }
+
+        function limpiarPantalla() { renderizar([]); }
+        function mostrarUltimos(n) { renderizar(bddInterna.slice(-n)); }
+        function mostrarTodos() { renderizar(bddInterna); }
+
+        setInterval(iniciarReloj, 1000);
+        iniciarReloj();
+        mostrarTodos(); // Al abrir la página, que muestre lo que ya estaba guardado
+    </script>
+</body>
+</html>
