@@ -5,11 +5,28 @@ require('dotenv').config();
 const app = express();
 const port = process.env.PORT || 3000;
 
-// Configuración de la conexión a la base de datos
+// 1. Configuración de la conexión
 const pool = new Pool({
   connectionString: process.env.DATABASE_URL,
   ssl: { rejectUnauthorized: false }
 });
+
+// 2. BLOQUE NUEVO: Crear la tabla automáticamente si no existe
+const inicializarTabla = async () => {
+  const queryTexto = `
+    CREATE TABLE IF NOT EXISTS registros (
+      id SERIAL PRIMARY KEY,
+      fecha_hora TIMESTAMP NOT NULL
+    );
+  `;
+  try {
+    await pool.query(queryTexto);
+    console.log("Tabla verificada o creada correctamente");
+  } catch (err) {
+    console.error("Error al crear la tabla:", err);
+  }
+};
+inicializarTabla(); // Ejecutar la función
 
 app.use(express.static('public'));
 app.use(express.json());
